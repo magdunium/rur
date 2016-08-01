@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<style>
+    .jumbotron{
+        background-color: #808080;
+    }
+    canvas{
+        border: 1px solid #808080;
+        background-color: #e6e6e6;
+        margin-left: 385px;
+    }
+
+</style>
+</head>
+<body onload="startGame()">
+    
+<script>
+    
+    var unicorn;
+    
+    function startGame(){
+        gameArea.start();
+        unicorn = new component(30, 30, '#cc0066', 10, 120);
+    }
+    
+    var gameArea = {
+        canvas: document.createElement('canvas'),
+        start: function(){
+            this.canvas.width = 1140;
+            this.canvas.height = 200;
+            this.context = this.canvas.getContext("2d");
+            document.body.insertBefore(this.canvas, document.body.childNodes[4]);
+            this.interval = setInterval(updateGameArea, 20);
+            window.addEventListener('keydown', function(e){
+                gameArea.keys = (gameArea.keys || []);
+                gameArea.keys[e.keyCode] = (e.type == 'keydown');
+                })
+            window.addEventListener('keyup', function(e){
+                gameArea.keys[e.keyCode] = (e.type == 'keydown');
+            })
+        },
+        clear: function(){
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+    }
+
+    function component(width, height, color, x, y){
+        this.width = width;
+        this.height = height;
+        this.x = x;
+        this.y = y;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.update = function(){
+            ctx = gameArea.context;
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+        this.newPos = function(){
+            this.x += this.speedX;
+            this.y += this.speedY;
+        }
+    }
+    
+    function updateGameArea(){
+        gameArea.clear();
+        unicorn.speedX = 0;
+        unicorn.speedY = 0;
+        if (gameArea.keys && gameArea.keys[37]) {unicorn.speedX = -1; }
+        if (gameArea.keys && gameArea.keys[39]) {unicorn.speedX = 1; }
+        if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -1; }
+        if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 1; }
+        unicorn.newPos();
+        unicorn.update();
+    }
+
+    
+</script>    
+    
+    
+<div class='container'>
+    <div class='jumbotron'>
+        <h1>Run Unicorn Run</h1>
+    </div>
+</div>
+    
+<div class='row'>
+    <div class='col-sm-6'>
+        </div>
+        <div class='btn-group'>
+            <button type='button' class='btn btn-default' onclick='startGame()'>Start</button>
+            <button type='button' class='btn btn-default' onclick='startGame()'>Reset</button>
+        </div>
+    </div>
+</div>    
+    
+    
+</body>    
+</html>

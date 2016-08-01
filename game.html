@@ -32,7 +32,7 @@
             this.canvas.height = 300;
             this.context = this.canvas.getContext("2d");
             document.body.insertBefore(this.canvas, document.body.childNodes[4]);
-            this.interval = setInterval(updateGameArea, 20);
+            this.interval = setInterval(updateGameArea, 10);
             window.addEventListener('keydown', function(e){
                 gameArea.keys = (gameArea.keys || []);
                 gameArea.keys[e.keyCode] = (e.type == 'keydown');
@@ -58,6 +58,8 @@
         this.y = y;
         this.speedX = 0;
         this.speedY = 0;
+        this.gravity = 0.04;
+        this.gravitySpeed = 40;
         this.update = function(){
             ctx = gameArea.context;
             if(type == 'image'){
@@ -65,14 +67,16 @@
             }
         }
         this.newPos = function(){
+            this.gravitySpeed += this.gravity;
             this.x += this.speedX;
-            this.y += this.speedY;
+            this.y += this.speedY + this.gravitySpeed;
             this.hitBottom();
         }
         this.hitBottom = function(){
             var rockbottom = gameArea.canvas.height - this.height;
             if (this.y > rockbottom){
                 this.y = rockbottom;
+                this.gravitySpeed = 0;
             }
         }
     }
@@ -81,15 +85,14 @@
         gameArea.clear();
         unicorn.speedX = 0;
         unicorn.speedY = 0;
-        if (gameArea.keys && gameArea.keys[37]) {unicorn.speedX = -2; }
-        if (gameArea.keys && gameArea.keys[39]) {unicorn.speedX = 2; }
-        if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -2; }
-        if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 2; }
+        if (gameArea.keys && gameArea.keys[37]) {unicorn.speedX = -3; } // cofanie się
+        if (gameArea.keys && gameArea.keys[39]) {unicorn.speedX = 3; } // ruch do przodu
+        if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -2.5; } //skakanie do góry
+        if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 3; } // opad - wywołany klawiszem, nie samoistny
         unicorn.newPos();
         unicorn.update();
     }
 
-    
 </script>    
     
     

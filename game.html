@@ -29,7 +29,7 @@
         canvas: document.createElement('canvas'),
         start: function(){
             this.canvas.width = 1140;
-            this.canvas.height = 200;
+            this.canvas.height = 300;
             this.context = this.canvas.getContext("2d");
             document.body.insertBefore(this.canvas, document.body.childNodes[4]);
             this.interval = setInterval(updateGameArea, 20);
@@ -67,6 +67,13 @@
         this.newPos = function(){
             this.x += this.speedX;
             this.y += this.speedY;
+            this.hitBottom();
+        }
+        this.hitBottom = function(){
+            var rockbottom = gameArea.canvas.height - this.height;
+            if (this.y > rockbottom){
+                this.y = rockbottom;
+            }
         }
     }
     
@@ -74,10 +81,10 @@
         gameArea.clear();
         unicorn.speedX = 0;
         unicorn.speedY = 0;
-        if (gameArea.keys && gameArea.keys[37]) {unicorn.speedX = -1; }
-        if (gameArea.keys && gameArea.keys[39]) {unicorn.speedX = 1; }
-        if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -1; }
-        if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 1; }
+        if (gameArea.keys && gameArea.keys[37]) {unicorn.speedX = -2; }
+        if (gameArea.keys && gameArea.keys[39]) {unicorn.speedX = 2; }
+        if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -2; }
+        if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 2; }
         unicorn.newPos();
         unicorn.update();
     }

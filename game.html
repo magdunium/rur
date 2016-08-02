@@ -85,10 +85,10 @@
         gameArea.clear();
         unicorn.speedX = 0;
         unicorn.speedY = 0;
-        if (gameArea.keys && gameArea.keys[37]) {unicorn.speedX = -3; } // cofanie się
-        if (gameArea.keys && gameArea.keys[39]) {unicorn.speedX = 3; } // ruch do przodu
-        if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -2.5; } //skakanie do góry
-        if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 3; } // opad - wywołany klawiszem, nie samoistny
+        if (gameArea.keys && gameArea.keys[37]) {unicorn.speedX = -3; } // backwards
+        if (gameArea.keys && gameArea.keys[39]) {unicorn.speedX = 3; } // forward
+        if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -2.5; } //jump
+        if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 3; } // falling - using key
         unicorn.newPos();
         unicorn.update();
     }

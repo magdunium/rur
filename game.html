@@ -38,11 +38,11 @@
         start: function(){
             this.canvas.width = 1140;
             this.canvas.height = 300;
+            this.interval = setInterval(updateGameArea, 20);
             this.context = this.canvas.getContext("2d");
             document.body.insertBefore(this.canvas, document.body.childNodes[4]);
             this.frameNo = 0;
             this.candyNo = 0;
-            this.interval = setInterval(updateGameArea, 20);
             window.addEventListener('keydown', function(e){
                 gameArea.keys = (gameArea.keys || []);
                 gameArea.keys[e.keyCode] = (e.type == 'keydown');
@@ -56,7 +56,13 @@
         },
         stop: function(){
             clearInterval(this.interval);
+        },
+        reset: function(){
+            setInterval(this.interval);
+            this.frameNo = 0;
+            obstacles = [];
         }
+        
     }
     function component(width, height, color, x, y, type){
         this.type = type;
@@ -103,9 +109,9 @@
     }
     
     function updateGameArea(){
+        gameArea.clear();
         gameArea.frameNo += 1;
         gameArea.candyNo = 0;
-        gameArea.clear();
         
         if (gameArea.frameNo == 1 || everyinterval(150)){
             x = gameArea.canvas.width;
@@ -150,7 +156,7 @@
     <div class='col-sm-6'>
         </div>
         <div class='btn-group'>
-            <button type='button' class='btn btn-default' onclick='startGame()'>Speed Up!</button>
+            <br><button type='button' class='btn btn-default' onclick='gameArea.reset()'>Reset</button>
         </div>
     </div>
 </div>    

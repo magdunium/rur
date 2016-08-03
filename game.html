@@ -109,10 +109,10 @@
         
         if (gameArea.frameNo == 1 || everyinterval(150)){
             x = gameArea.canvas.width;
-            minHeight = 50;
-            maxHeight = 200;
+            minHeight = 30;
+            maxHeight = 80;
             height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-            obstacles.push(new component(100, height, 'cloud.png', x, 120, 'image'));
+            obstacles.push(new component(60, height, 'lightning-cloud.gif', x, 120, 'image'));
         }
         
         for (i = 0; i < obstacles.length; i += 1){

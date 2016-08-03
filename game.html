@@ -15,7 +15,6 @@
         margin-right: auto;
         display: block;
     }
-
 </style>
 </head>
 <body onload="startGame()"> 
@@ -23,10 +22,12 @@
 <script>
     
     var unicorn;
+    var score;
     
     function startGame(){
         gameArea.start();
         unicorn = new component(120, 120, 'unicorn.gif', 10, 120, 'image');
+        score = new component('16px', 'Arial', 'black', 40, 40, 'text');
     }
     
     var gameArea = {
@@ -36,6 +37,7 @@
             this.canvas.height = 300;
             this.context = this.canvas.getContext("2d");
             document.body.insertBefore(this.canvas, document.body.childNodes[4]);
+            this.frameNo = 0;
             this.interval = setInterval(updateGameArea, 10);
             window.addEventListener('keydown', function(e){
                 gameArea.keys = (gameArea.keys || []);
@@ -49,7 +51,6 @@
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
     }
-
     function component(width, height, color, x, y, type){
         this.type = type;
         if(type == 'image'){
@@ -69,6 +70,15 @@
             if(type == 'image'){
                 ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
             }
+            else if(this.type == 'text'){
+                ctx.font = this.width + ' ' + this.height;
+                ctx.fillStyle = color;
+                ctx.fillText(this.text, this.x, this.y);
+            }
+            else{
+                ctx.fillStyle = color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
         }
         this.newPos = function(){
             this.gravitySpeed += this.gravity;
@@ -86,6 +96,7 @@
     }
     
     function updateGameArea(){
+        gameArea.frameNo = 0;
         gameArea.clear();
         unicorn.speedX = 0;
         unicorn.speedY = 0;
@@ -93,10 +104,11 @@
         if (gameArea.keys && gameArea.keys[39]) {unicorn.speedX = 3; } // forward
         if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -2.5; } //jump
         if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 3; } // falling - using key
+        score.text = 'SCORE: ' + gameArea.frameNo;
+        score.update();
         unicorn.newPos();
         unicorn.update();
     }
-
 </script>    
     
     

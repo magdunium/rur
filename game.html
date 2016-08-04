@@ -5,11 +5,13 @@
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <style>
     .jumbotron{
-        background-color: #808080;
+        background-color: #99ccff;
+        font-family: 'Courier';
+        text-align: center;
     }
     canvas{
         border: 1px solid #808080;
-        background-color: #99ddff;
+        background-color: #808080;
         padding-left: 0;
         padding-right: 0;
         margin-left: auto;
@@ -24,6 +26,7 @@
 <script>
     
     var unicorn;
+    var background;
     var score;
     var candyCount;
     var obstacles = [];
@@ -31,9 +34,10 @@
     
     function startGame(){
         unicorn = new component(70, 60, 'unicorn.gif', 90, 120, 'image');
-        score = new component('16px', 'Arial', 'black', 40, 40, 'text');
-        candyCount = new component('16px', 'Arial', '#cc0066', 40, 60, 'text');
-        gameOverText = new component('28px', 'Courier', 'red', 180, 150, 'text');
+        background = new component(1140, 300, 'background.png', 0, 0, 'background');
+        score = new component('18px', 'Courier', 'black', 40, 40, 'text');
+        candyCount = new component('18px', 'Courier', '#cc0066', 40, 60, 'text');
+        gameOverText = new component('28px', 'Courier', 'black', 180, 150, 'text');
         gameArea.start()
     }
     
@@ -65,7 +69,7 @@
     
     function component(width, height, color, x, y, type){
         this.type = type;
-        if(type == 'image'){
+        if(type == 'image' || type == 'background'){
             this.image = new Image();
             this.image.src = color;
         }
@@ -79,8 +83,11 @@
         this.gravitySpeed = 40;
         this.update = function(){
             ctx = gameArea.context;
-            if(type == 'image'){
+            if(type == 'image' || type == 'background'){
                 ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+                if (type == 'background'){
+                    ctx.drawImage(this.image, this.x + this.width, this.y, this.width, this.height);
+                }
             }
             else if(this.type == 'text'){
                 ctx.font = this.width + ' ' + this.height;
@@ -96,6 +103,11 @@
             this.gravitySpeed += this.gravity;
             this.x += this.speedX;
             this.y += this.speedY + this.gravitySpeed;
+            if (this.type == 'background'){
+                if (this.x == -(this.width)){
+                    this.x = 0;
+                }
+            }
             this.hitBottom();
         }
         this.hitBottom = function(){
@@ -138,6 +150,9 @@
         }
         
         gameArea.clear();
+        background.speedX = -1;
+        background.newPos();
+        background.update();
         gameArea.frameNo += 1;
         gameArea.candyNo = 0;
         score.text = 'SCORE: ' + gameArea.frameNo;

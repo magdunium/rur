@@ -1,3 +1,3 @@
 # rur
 
-Run Unicorn Run - the ultimate endless runner game with unicrons and much more.
+Run Unicorn Run - the ultimate endless runner game with unicorns and much more.

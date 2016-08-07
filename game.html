@@ -18,39 +18,39 @@
         margin-right: auto;
         display: block;
     }
-   
+
 </style>
 </head>
-<body onload="startGame()"> 
-    
+<body onload="startGame()">
+
 <script>
-    
     var unicorn;
     var background;
     var score;
     var candyCount;
     var obstacles = [];
+    var candies = [];
     var gameOverText;
-    
+
     function startGame(){
-        unicorn = new component(70, 60, 'unicorn.gif', 90, 120, 'image');
-        background = new component(1140, 300, 'background.png', 0, 0, 'background');
+        unicorn = new component(70, 60, 'unicorn.gif', 90, 13, 'image', 'unicorn');
+        background = new component(1140, 400, 'background.png', 0, 0, 'background');
         score = new component('18px', 'Courier', 'black', 40, 40, 'text');
         candyCount = new component('18px', 'Courier', '#cc0066', 40, 60, 'text');
         gameOverText = new component('28px', 'Courier', 'black', 180, 150, 'text');
         gameArea.start()
     }
-    
+
     var gameArea = {
         canvas: document.createElement('canvas'),
         start: function(){
             this.canvas.width = 1140;
-            this.canvas.height = 300;
+            this.canvas.height = 400;
             this.interval = setInterval(updateGameArea, 1);
             this.context = this.canvas.getContext("2d");
             document.body.insertBefore(this.canvas, document.body.childNodes[4]);
             this.frameNo = 0;
-            this.candyNo = 0;
+            this.candyScore = 0;
             window.addEventListener('keydown', function(e){
                 gameArea.keys = (gameArea.keys || []);
                 gameArea.keys[e.keyCode] = (e.type == 'keydown');
@@ -66,21 +66,22 @@
             clearInterval(this.interval);
         },
     }
-    
-    function component(width, height, color, x, y, type){
+
+    function component(width, height, color, x, y, type, hero){
         this.type = type;
+        this.hero = hero;
         if(type == 'image' || type == 'background'){
             this.image = new Image();
             this.image.src = color;
         }
         this.width = width;
         this.height = height;
-        this.x = x;
-        this.y = y;
         this.speedX = 0;
         this.speedY = 0;
-        this.gravity = 0.03; //jump height
-        this.gravitySpeed = 40;
+        this.x = x;
+        this.y = y;
+        this.gravity = 0.05; //jump height
+        this.gravitySpeed = 0;
         this.update = function(){
             ctx = gameArea.context;
             if(type == 'image' || type == 'background'){
@@ -97,16 +98,20 @@
             else{
                 ctx.fillStyle = color;
                 ctx.fillRect(this.x, this.y, this.width, this.height);
+
             }
         }
         this.newPos = function(){
             this.gravitySpeed += this.gravity;
             this.x += this.speedX;
-            this.y += this.speedY + this.gravitySpeed;
+            this.y += this.speedY;
             if (this.type == 'background'){
                 if (this.x == -(this.width)){
                     this.x = 0;
                 }
+            }
+            else if (this.hero == 'unicorn') {
+              this.y += this.speedY + this.gravitySpeed;
             }
             this.hitBottom();
         }
@@ -115,6 +120,9 @@
             if (this.y > rockbottom){
                 this.y = rockbottom;
                 this.gravitySpeed = 0;
+                if (this.hero == 'unicorn'){
+                  this.y = rockbottom; // addin -10 generates bouncing TODO: fix it
+                }
             }
         }
         this.collision = function(collisionObj){
@@ -127,49 +135,54 @@
             var objtop = collisionObj.y;
             var objbottom = collisionObj.y + (collisionObj.height);
             var crash = true;
-            if ((unibottom < objtop) || 
-                (unitop > objbottom) || 
-                (uniright < objleft) || 
+            if ((unibottom < objtop) ||
+                (unitop > objbottom) ||
+                (uniright < objleft) ||
                 (unileft > objright)){
                 crash = false;
             }
             return crash;
+
         }
     }
-    
+
     function updateGameArea(){
         var x, minHeight, maxHeight, height;
-        
-        for (i = 0; i < obstacles.length; i += 1){
+
+        for (i = 0; i < obstacles.length; i ++){
             if (unicorn.collision(obstacles[i])){
                 gameOverText.text = 'GAME OVER. Your Score: ' + gameArea.frameNo + ' Press Enter to restart';
                 gameOverText.update();
                 if (gameArea.keys[13]) {window.location.reload();}
-                return;   
+                return;
             }
         }
-        
+
         gameArea.clear();
         background.speedX = -1;
         background.newPos();
         background.update();
         gameArea.frameNo += 1;
-        gameArea.candyNo = 0;
         score.text = 'SCORE: ' + gameArea.frameNo;
         score.update();
-        candyCount.text = 'CANDIES: ' + gameArea.candyNo;
+        candyCount.text = 'CANDIES: ' + gameArea.candyScore;
         candyCount.update();
         unicorn.newPos();
         unicorn.update();
         unicorn.speedX = 0;
         unicorn.speedY = 0;
 
-        if (gameArea.frameNo == 1 || everyinterval(250)){
+        if (gameArea.frameNo == 0 || everyinterval(250)){
             x = gameArea.canvas.width;
-            minHeight = 30;
-            maxHeight = 50;
+            minHeight = 20;
+            maxHeight = gameArea.canvas.height;
             height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-            obstacles.push(new component(30, height, 'lightning-cloud.gif', x, 120, 'image'));
+            obstacles.push(new component(50, 50, 'lightning-cloud.gif', x, height, 'image'));
+
+          if (gameArea.frameNo == 0 || everyinterval(350)){
+            height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+            candies.push(new component(60,40, 'candy.gif', x, height, 'image', 'candy'));
+          }
         }
 
         for (i = 0; i < obstacles.length; i += 1){
@@ -178,35 +191,42 @@
             obstacles[i].update();
         }
 
+        for (i = 0; i < candies.length; i += 1){
+            candies[i].speedX = -1;
+            candies[i].newPos();
+            candies[i].update();
+        }
+
         if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -2.5; } //jump
         if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 3; } // falling - using key
+        if (gameArea.keys[13]) {window.location.reload();}
 
         function everyinterval(n) {
             if ((gameArea.frameNo / n) % 1 == 0) {return true;}
             return false;
         }
     }
-    
+
     function restartGame(){
         window.location.reload();
     }
-</script>    
-    
-    
+</script>
+
+
 <div class='container'>
     <div class='jumbotron'>
         <h1>Run Unicorn Run</h1>
     </div>
 </div>
-    
+
 <div class='row'>
      <div class="col-md-6">
      </div>
         <div class="btn-group-md">
             <button type='button' class='btn btn-default' onclick='restartGame()'>Restart</button>
         </div>
-</div>    
-    
-    
-</body>    
+</div>
+
+
+</body>
 </html>

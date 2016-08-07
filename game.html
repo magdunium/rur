@@ -37,7 +37,7 @@
         background = new component(1140, 400, 'background.png', 0, 0, 'background');
         score = new component('18px', 'Courier', 'black', 40, 40, 'text');
         candyCount = new component('18px', 'Courier', '#cc0066', 40, 60, 'text');
-        gameOverText = new component('28px', 'Courier', 'black', 180, 150, 'text');
+        gameOverText = new component('28px', 'Courier', 'black', 320, 150, 'text');
         gameArea.start()
     }
 
@@ -151,9 +151,8 @@
 
         for (i = 0; i < obstacles.length; i ++){
             if (unicorn.collision(obstacles[i])){
-                gameOverText.text = 'GAME OVER. Your Score: ' + gameArea.frameNo + ' Press Enter to restart';
+                gameOverText.text = 'GAME OVER. Your Score: ' + gameArea.frameNo;
                 gameOverText.update();
-                if (gameArea.keys[13]) {window.location.reload();}
                 return;
             }
         }
@@ -181,7 +180,7 @@
 
           if (gameArea.frameNo == 0 || everyinterval(350)){
             height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-            candies.push(new component(60,40, 'candy.gif', x, height, 'image', 'candy'));
+            candies.push(new component(60,30, 'candy.gif', x, height, 'image', 'candy'));
           }
         }
 
@@ -192,14 +191,13 @@
         }
 
         for (i = 0; i < candies.length; i += 1){
-            candies[i].speedX = -1;
+            candies[i].speedX = -2;
             candies[i].newPos();
             candies[i].update();
         }
 
         if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -2.5; } //jump
         if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 3; } // falling - using key
-        if (gameArea.keys[13]) {window.location.reload();}
 
         function everyinterval(n) {
             if ((gameArea.frameNo / n) % 1 == 0) {return true;}

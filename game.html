@@ -27,16 +27,17 @@
     var unicorn;
     var background;
     var score;
-    var candyCount;
+    var candyCounter = 0;
     var obstacles = [];
-    var candies = [];
+    var candy = null;
     var gameOverText;
+    var candyValue = 0;
 
     function startGame(){
         unicorn = new component(70, 60, 'unicorn.gif', 90, 13, 'image', 'unicorn');
         background = new component(1140, 400, 'background.png', 0, 0, 'background');
         score = new component('18px', 'Courier', 'black', 40, 40, 'text');
-        candyCount = new component('18px', 'Courier', '#cc0066', 40, 60, 'text');
+        candyCounter = new component('18px', 'Courier', '#cc0066', 40, 60, 'text');
         gameOverText = new component('28px', 'Courier', 'black', 320, 150, 'text');
         gameArea.start()
     }
@@ -50,7 +51,6 @@
             this.context = this.canvas.getContext("2d");
             document.body.insertBefore(this.canvas, document.body.childNodes[4]);
             this.frameNo = 0;
-            this.candyScore = 0;
             window.addEventListener('keydown', function(e){
                 gameArea.keys = (gameArea.keys || []);
                 gameArea.keys[e.keyCode] = (e.type == 'keydown');
@@ -126,6 +126,7 @@
             }
         }
         this.collision = function(collisionObj){
+            if(collisionObj == null){return false;}
             var unileft = this.x;
             var uniright = this.x + (this.width);
             var unitop = this.y;
@@ -157,6 +158,12 @@
             }
         }
 
+        if (unicorn.collision(candy)){
+          candyValue += 1;
+          delete candy;
+          candy = null;
+        }
+
         gameArea.clear();
         background.speedX = -1;
         background.newPos();
@@ -164,8 +171,8 @@
         gameArea.frameNo += 1;
         score.text = 'SCORE: ' + gameArea.frameNo;
         score.update();
-        candyCount.text = 'CANDIES: ' + gameArea.candyScore;
-        candyCount.update();
+        candyCounter.text = 'CANDIES: ' + candyValue;
+        candyCounter.update();
         unicorn.newPos();
         unicorn.update();
         unicorn.speedX = 0;
@@ -178,9 +185,9 @@
             height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
             obstacles.push(new component(50, 50, 'lightning-cloud.gif', x, height, 'image'));
 
-          if (gameArea.frameNo == 0 || everyinterval(350)){
+          if ((gameArea.frameNo == 0 || everyinterval(350)) && (candy == null)){
             height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-            candies.push(new component(60,30, 'candy.gif', x, height, 'image', 'candy'));
+            candy = new component(60,30, 'candy.gif', x, height, 'image', 'candy');
           }
         }
 
@@ -188,13 +195,17 @@
             obstacles[i].speedX = -1;
             obstacles[i].newPos();
             obstacles[i].update();
+            if (obstacles[i].x < 0){
+                obstacles.shift();
+            }
         }
 
-        for (i = 0; i < candies.length; i += 1){
-            candies[i].speedX = -2;
-            candies[i].newPos();
-            candies[i].update();
+        if (candy){
+          candy.speedX = -2;
+          candy.newPos();
+          candy.update();
         }
+
 
         if (gameArea.keys && gameArea.keys[38]) {unicorn.speedY = -2.5; } //jump
         if (gameArea.keys && gameArea.keys[40]) {unicorn.speedY = 3; } // falling - using key

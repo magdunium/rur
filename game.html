@@ -151,7 +151,7 @@
         var x, minHeight, maxHeight, height;
 
         for (i = 0; i < obstacles.length; i ++){
-            if (unicorn.collision(obstacles[i])){
+            if (unicorn.collision(obstacles[i]) ){
                 gameOverText.text = 'GAME OVER. Your Score: ' + gameArea.frameNo;
                 gameOverText.update();
                 return;
@@ -185,7 +185,7 @@
             height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
             obstacles.push(new component(50, 50, 'lightning-cloud.gif', x, height, 'image'));
 
-          if ((gameArea.frameNo == 0 || everyinterval(350)) && (candy == null)){
+          if (gameArea.frameNo == 0 || everyinterval(350)){
             height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
             candy = new component(60,30, 'candy.gif', x, height, 'image', 'candy');
           }
@@ -195,9 +195,7 @@
             obstacles[i].speedX = -1;
             obstacles[i].newPos();
             obstacles[i].update();
-            if (obstacles[i].x < 0){
-                obstacles.shift();
-            }
+            if (obstacles[i].x < 0){obstacles.shift();}
         }
 
         if (candy){

@@ -32,6 +32,7 @@
     var candy = null;
     var gameOverText;
     var candyValue = 0;
+    var music = new Audio('main-theme.wav');
 
     function startGame(){
         unicorn = new component(70, 60, 'unicorn.gif', 90, 13, 'image', 'unicorn');
@@ -39,6 +40,7 @@
         score = new component('18px', 'Courier', 'black', 40, 40, 'text');
         candyCounter = new component('18px', 'Courier', '#cc0066', 40, 60, 'text');
         gameOverText = new component('28px', 'Courier', 'black', 320, 150, 'text');
+        music.play();
         gameArea.start()
     }
 
@@ -155,6 +157,7 @@
               if (candyValue == 0){
                 gameOverText.text = 'GAME OVER. Your Score: ' + gameArea.frameNo;
                 gameOverText.update();
+                music.pause();
                 return;
               }
               else if (candyValue >= 1){
@@ -221,7 +224,7 @@
     }
 
     function restartGame(){
-        window.location.reload();
+        window.location.reload(true);
     }
 
 

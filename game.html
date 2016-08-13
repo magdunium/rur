@@ -27,7 +27,7 @@
     var unicorn;
     var background;
     var score;
-    var candyCounter = 0;
+    var candyCounter = 0;  //check if necessary, then delete
     var obstacles = [];
     var candy = null;
     var gameOverText;
@@ -45,7 +45,7 @@
     var gameArea = {
         canvas: document.createElement('canvas'),
         start: function(){
-            this.canvas.width = 1140;
+            this.canvas.width = 1140; //
             this.canvas.height = 400;
             this.interval = setInterval(updateGameArea, 1);
             this.context = this.canvas.getContext("2d");
@@ -121,7 +121,7 @@
                 this.y = rockbottom;
                 this.gravitySpeed = 0;
                 if (this.hero == 'unicorn'){
-                  this.y = rockbottom; // addin -10 generates bouncing TODO: fix it
+                  this.y = rockbottom; // FIXME: addin -10 generates bouncing
                 }
             }
         }
@@ -151,10 +151,16 @@
         var x, minHeight, maxHeight, height;
 
         for (i = 0; i < obstacles.length; i ++){
-            if (unicorn.collision(obstacles[i]) ){
+            if (unicorn.collision(obstacles[i])){
+              if (candyValue == 0){
                 gameOverText.text = 'GAME OVER. Your Score: ' + gameArea.frameNo;
                 gameOverText.update();
                 return;
+              }
+              else if (candyValue >= 1){
+                candyValue --;
+                obstacles.shift();
+              }
             }
         }
 
@@ -183,16 +189,16 @@
             minHeight = 20;
             maxHeight = gameArea.canvas.height;
             height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-            obstacles.push(new component(50, 50, 'lightning-cloud.gif', x, height, 'image'));
+            obstacles.push(new component(50, 60, 'lightning-cloud.gif', x, height, 'image'));
 
           if (gameArea.frameNo == 0 || everyinterval(350)){
             height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-            candy = new component(60,30, 'candy.gif', x, height, 'image', 'candy');
+            candy = new component(50,30, 'candy.gif', x, height, 'image', 'candy');
           }
         }
 
         for (i = 0; i < obstacles.length; i += 1){
-            obstacles[i].speedX = -1;
+            obstacles[i].speedX = -1.2;
             obstacles[i].newPos();
             obstacles[i].update();
             if (obstacles[i].x < 0){obstacles.shift();}
@@ -217,6 +223,8 @@
     function restartGame(){
         window.location.reload();
     }
+
+
 </script>
 
 

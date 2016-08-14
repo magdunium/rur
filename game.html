@@ -18,6 +18,9 @@
         margin-right: auto;
         display: block;
     }
+    body{
+      background-color: #F5F5F5;
+    }
 
 </style>
 </head>
@@ -155,7 +158,7 @@
         for (i = 0; i < obstacles.length; i ++){
             if (unicorn.collision(obstacles[i])){
               if (candyValue == 0){
-                gameOverText.text = 'GAME OVER. Your Score: ' + gameArea.frameNo;
+                gameOverText.text = 'GAME OVER. Your Score: ' + Math.floor(gameArea.frameNo / 100);
                 gameOverText.update();
                 music.pause();
                 return;
@@ -178,7 +181,7 @@
         background.newPos();
         background.update();
         gameArea.frameNo += 1;
-        score.text = 'SCORE: ' + gameArea.frameNo;
+        score.text = 'SCORE: ' + Math.floor(gameArea.frameNo / 100);
         score.update();
         candyCounter.text = 'CANDIES: ' + candyValue;
         candyCounter.update();

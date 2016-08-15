@@ -43,6 +43,10 @@
         score = new component('18px', 'Courier', 'black', 40, 40, 'text');
         candyCounter = new component('18px', 'Courier', '#cc0066', 40, 60, 'text');
         gameOverText = new component('28px', 'Courier', 'black', 320, 150, 'text');
+        music.addEventListener('ended', function(){
+          this.currentTime = 0;
+          this.play()
+        }, false);
         music.play();
         gameArea.start()
     }

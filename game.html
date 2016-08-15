@@ -36,6 +36,8 @@
     var gameOverText;
     var candyValue = 0;
     var music = new Audio('main-theme.wav');
+    var candyHitSound = new Audio('candyHit.wav');
+    var cloudHitSound = new Audio('cloudHit.wav');
 
     function startGame(){
         unicorn = new component(70, 60, 'unicorn.gif', 90, 13, 'image', 'unicorn');
@@ -161,7 +163,10 @@
 
         for (i = 0; i < obstacles.length; i ++){
             if (unicorn.collision(obstacles[i])){
+              cloudHitSound.play();
+
               if (candyValue == 0){
+                cloudHitSound.pause();
                 gameOverText.text = 'GAME OVER. Your Score: ' + Math.floor(gameArea.frameNo / 100);
                 gameOverText.update();
                 music.pause();
@@ -175,6 +180,7 @@
         }
 
         if (unicorn.collision(candy)){
+          candyHitSound.play();
           candyValue += 1;
           delete candy;
           candy = null;
